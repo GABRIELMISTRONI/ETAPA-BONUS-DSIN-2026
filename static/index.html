@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#09121c"><title>F.O.G.O. — Central de operações</title>
+  <link rel="preconnect" href="https://unpkg.com"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail">
+      <a class="brand" href="#" aria-label="F.O.G.O. início"><span class="brand-mark">F</span><span>F.O.G.O.<small>OPERAÇÕES URBANAS</small></span></a>
+      <div class="rail-label">MONITORAMENTO</div>
+      <nav class="nav" aria-label="Navegação principal">
+        <button class="nav-item active" data-view="map"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5M5.5 9v11h13V9M9 20v-6h6v6"/></svg></span> Visão geral</button>
+        <button class="nav-item" data-view="inventory"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M8 4v16M16 4v16M3.5 10h17M3.5 15h17"/></svg></span> Inventário</button>
+        <button class="nav-item" data-view="predictions"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5h16M6.5 16l4-4 3 2 5-7"/><path d="M15.5 7H19v3.5"/><circle cx="6.5" cy="16" r="1"/></svg></span> Previsões</button>
+      </nav>
+      <div class="rail-bottom"><span class="live-dot"></span><div><b>SISTEMA OPERACIONAL</b><small id="connection">conectando ao servidor…</small></div></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div><div class="eyebrow">CENTRO INTEGRADO · JOÃO PESSOA/PB</div><h1 id="page-title">Visão geral</h1></div><div class="top-actions"><span class="clock" id="clock">--:--:--</span><button class="button button-quiet" id="sim-now"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 10 6-10 6z"/></svg><span>Simular evento</span></button></div></header>
+      <section class="view active" id="view-map">
+        <div class="metrics" id="metrics"></div>
+        <div class="layout-main">
+          <section class="panel map-panel">
+            <div class="panel-head"><div><h2>Mapa operacional</h2><p>Equipamentos, agentes e condição por região</p></div><div class="map-tools"><label class="select-wrap"><span>Camada</span><select id="map-layer"><option value="equipment">Equipamentos</option><option value="agents">Agentes</option><option value="all">Tudo</option></select></label><button class="icon-button" id="locate" title="Voltar para a cidade" aria-label="Voltar para a cidade"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.5"/><path d="M12 1.8v3M12 19.2v3M1.8 12h3M19.2 12h3"/></svg></button></div></div>
+            <div class="map-legend"><span><i class="legend-dot good"></i>Operacional</span><span><i class="legend-dot warning"></i>Atenção</span><span><i class="legend-dot bad"></i>Crítico</span><span><i class="legend-dot agent"></i>Agente ativo</span></div>
+            <div class="map-filters" aria-label="Filtros do mapa"><select id="map-filter-region" aria-label="Filtrar mapa por região"><option value="">Todas as regiões</option></select><select id="map-filter-neighborhood" aria-label="Filtrar mapa por bairro"><option value="">Todos os bairros</option></select><select id="map-filter-type" aria-label="Filtrar mapa por tipo"><option value="">Todos os tipos</option></select><select id="map-filter-status" aria-label="Filtrar mapa por situação"><option value="">Todas as situações</option></select><select id="map-filter-org" aria-label="Filtrar mapa por órgão"><option value="">Todos os órgãos</option></select></div>
+            <div id="map"></div>
+            <div class="map-caption"><span><b id="map-count">—</b> itens · formato = tipo, cor = situação</span><span>Dados de demonstração · © OpenStreetMap</span></div>
+          </section>
+          <aside class="panel side-panel"><div class="panel-head"><div><h2>Fila de atenção</h2><p>Prioridades para a equipe</p></div><span class="count-pill" id="alert-count">0</span></div><div class="alert-list" id="alerts"></div><div class="panel-foot"><button class="text-button" data-view="inventory">Ver inventário completo <span>→</span></button></div></aside>
+        </div>
+        <div class="lower-grid"><section class="panel"><div class="panel-head"><div><h2>Condição por região</h2><p>Semáforo de disponibilidade e risco previsto</p></div><span class="small-muted">AGORA</span></div><div class="region-list" id="regions"></div></section>
+          <section class="panel"><div class="panel-head"><div><h2>Atividade recente</h2><p>Telemetria recebida em tempo real</p></div><span class="live-tag"><i></i> AO VIVO</span></div><div class="activity-list" id="activity"><div class="empty">Aguardando a primeira leitura do simulador.</div></div></section></div>
+      </section>
+
+      <section class="view" id="view-inventory">
+        <div class="inventory-summary" id="inventory-summary"></div>
+        <section class="panel inventory-panel"><div class="panel-head inventory-head"><div><h2>Inventário urbano</h2><p>Cadastros de equipamentos e agentes de campo</p></div><div class="action-row"><button class="button button-outline" id="new-agent"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.5-4 2.8-6 7-6s6.5 2 7 6M19 8v6m-3-3h6"/></svg> Agente</button><button class="button button-primary" id="new-equipment"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg> Equipamento</button></div></div>
+          <div class="tabs"><button class="tab active" data-inventory="equipment"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4M7 8h10M7 12h6"/></svg> Equipamentos <b id="equipment-total">0</b></button><button class="tab" data-inventory="agents"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.5-4 2.8-6 7-6s6.5 2 7 6M8 4.5 12 2l4 2.5"/></svg> Agentes <b id="agent-total">0</b></button></div>
+          <div class="filters"><label class="search"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="search" placeholder="Buscar nome, série ou bairro…"></label><select id="filter-type"><option value="">Todos os tipos</option></select><select id="filter-status"><option value="">Todas as situações</option><option>operacional</option><option>mau funcionamento</option><option>em manutenção</option><option>desativado</option><option>furtado</option><option>não instalado</option></select><select id="filter-region"><option value="">Todas as regiões</option></select><select id="filter-neighborhood"><option value="">Todos os bairros</option></select><select id="filter-org"><option value="">Todos os órgãos</option></select></div>
+          <div class="table-wrap"><table><thead id="table-head"></thead><tbody id="table-body"></tbody></table></div><div class="table-footer" id="table-footer"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-predictions">
+        <div class="prediction-intro"><div><span class="eyebrow">APOIO À DECISÃO · NÃO É GARANTIA DE OCORRÊNCIA</span><h2>Antecipe pontos de atenção.</h2><p>Previsões simples, transparentes e ligadas aos dados que a equipe consegue verificar.</p></div><div class="intro-actions"><button class="button button-outline" id="log-occurrence"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg> Registrar ocorrência</button><div class="model-chip"><span class="model-pulse"></span> MODELO EXPLICÁVEL <small>versão demonstrativa</small></div></div></div>
+        <div class="prediction-grid"><section class="panel heat-panel"><div class="panel-head"><div><h2>Risco por região e horário</h2><p>Próximas 24 horas · maior risco previsto na célula</p></div><span class="small-muted">0–100%</span></div><div class="heat-scroll"><div class="heatmap" id="heatmap"></div></div><div class="heat-legend"><span>Menor</span><i></i><i></i><i></i><i></i><i></i><span>Maior risco</span></div><div class="explain-box" id="risk-explain"><b>Explore o mapa de calor</b><br>Selecione uma célula para ver o horário e o risco relativo da região. Use a estimativa para revisar a escala; ela não prevê um evento individual.</div></section>
+          <section class="panel"><div class="panel-head"><div><h2>Tendência de falhas</h2><p>Variação da saúde média do equipamento</p></div><span class="small-muted">14 DIAS</span></div><div class="trend-list" id="trends"></div><div class="explain-note">Sinal de alerta, não diagnóstico. Poucas leituras reduzem a confiança.</div></section></div>
+        <div class="lower-grid prediction-lower"><section class="panel"><div class="panel-head"><div><h2>Reforço recomendado</h2><p>Regiões onde risco elevado e cobertura merecem revisão</p></div></div><div id="recommendations" class="recommendations"></div></section>
+          <section class="panel"><div class="panel-head"><div><h2>Comportamento fora do padrão</h2><p>Regras auditáveis aplicadas aos dados do simulador</p></div><span class="small-muted">REGRAS</span></div><div id="anomalies" class="anomaly-list"></div></section></div>
+        <section class="method-card"><span class="method-icon"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg></span><div><b>Como o risco é calculado</b><p id="method"></p><small>O resultado é uma prioridade relativa para orientar análise humana; não substitui despacho, contexto local ou avaliação profissional.</small></div></section>
+      </section>
+    </main>
+  </div>
+  <dialog id="record-dialog"><form id="record-form" method="dialog"><div class="dialog-head"><div><span class="eyebrow" id="form-eyebrow">CADASTRO</span><h2 id="form-title">Novo registro</h2></div><button type="button" class="icon-button" id="close-dialog" aria-label="Fechar"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div><div id="form-fields" class="form-grid"></div><div class="form-error" id="form-error"></div><div class="dialog-actions"><button type="button" class="button button-quiet" id="cancel-dialog">Cancelar</button><button type="submit" class="button button-primary">Salvar cadastro</button></div></form></dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="/static/app.js"></script>
+</body></html>
