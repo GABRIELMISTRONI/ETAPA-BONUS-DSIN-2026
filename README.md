@@ -2,6 +2,8 @@
 
 Demonstração integrada de inventário urbano, monitoramento e apoio à decisão. O foco é ser pequena o bastante para explicar cada parte e completa o bastante para percorrer um fluxo de ponta a ponta.
 
+[Assistir à demonstração em vídeo](demo/demonstracao.mp4).
+
 ## Iniciar no Windows
 
 1. Tenha Python 3.10 ou posterior instalado. Não há pacotes Python para instalar.
